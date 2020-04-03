@@ -1,0 +1,30 @@
+##配置项目名称
+spring:
+  application:
+    name: eureka-server
+
+##配置项目访问端口
+server:
+  port: 1001
+
+eureka:
+  instance:
+    ## 生产环境意义不大，一般都是ip定位
+    hostname: 127.0.0.1
+    ## IP注册eureka
+    prefer-ip-address: true
+  client:
+    ## 是否将本实例发布
+    register-with-eureka: false
+    ## 是否应从eureka服务器获取eureka注册表信息, 因为本身示例所以不需要获取
+    fetchRegistry: false
+    ## 注册服务的地址
+    ## serviceUrl:
+      ## defaultZone: http://127.0.0.1:1002/
+
+security:
+  basic:
+    enabled: true
+  user:
+    name: hugui
+    password: admin
