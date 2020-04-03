@@ -38,7 +38,7 @@ eureka.instance.hostname=127.0.0.1
 eureka.instance.prefer-ip-address= ture
 ```
 
-![1585818317858](https://github.com/TrimGHU/reborn/blob/master/1585818317858.png)
+![1585818317858](https://github.com/TrimGHU/reborn/blob/master/images/1585818317858.png)
 
 
 
@@ -132,7 +132,7 @@ eureka：
 
 @EnableDiscoveryClient 能发现很多种类的注册服务。
 
-![1585821358532](https://github.com/TrimGHU/reborn/blob/master/1585821358532.png)
+![1585821358532](https://github.com/TrimGHU/reborn/blob/master/images/1585821358532.png)
 
 ### Consul
 
