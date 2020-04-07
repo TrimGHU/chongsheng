@@ -7,14 +7,15 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @SpringBootApplication
 @EnableEurekaClient
 @RestController
 public class UserApplication {
 
-    @RequestMapping("/")
-    public String sayHi(){
-        return "hi";
+    @RequestMapping("/name")
+    public String getName(){
+        return "My name is Hello World";
     }
 
     public static void main(String[] args) {
