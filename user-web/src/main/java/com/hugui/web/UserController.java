@@ -13,7 +13,7 @@ public class UserController {
     private RestTemplate restTemplate;
 
     @Autowired
-    private UserService userService;
+    public UserService userService;
 
     @GetMapping("/name-ribbin")
     public String getUserNameRibbin(){
