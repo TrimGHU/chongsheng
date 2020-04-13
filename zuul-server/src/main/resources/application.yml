@@ -1,0 +1,12 @@
+server:
+  port: 4001
+
+spring:
+  application:
+    name: zull-server
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://hugui:admin@127.0.0.1:1001/eureka
+

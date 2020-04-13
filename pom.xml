@@ -12,6 +12,7 @@
         <module>eureka-server</module>
         <module>user</module>
         <module>user-web</module>
+        <module>zuul-server</module>
     </modules>
 
     <name>chongsheng</name>
