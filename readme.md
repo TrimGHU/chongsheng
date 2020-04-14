@@ -361,6 +361,154 @@ hystrix.command.||service-id||.execution.isolation.thread.timeoutInMilliseconds=
 ![sentinel-hystrix](https://github.com/TrimGHU/reborn/blob/master/images/sentinel-hystrix.png)
 
 
+### Zull & Gateway
+
+> Zuul is a JVM based router and server side load balancer by Netflix. 
+
+##### 1. 引入
+
+```XML
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-zuul</artifactId>
+</dependency>
+```
+
+##### 2. 配置文件
+
+```properties
+##最大连接数 默认200
+zuul.host.maxTotalConnections=200
+##每个路由最大链接数20
+zuul.host.maxPerRouteConnections=20
+##默认hystrix隔离是信号量隔离SEMAPHORE
+zuul.ribbonIsolationStrategy=THREAD
+```
+
+###### 路由配置
+
+```properties
+#####《传统模式》
+zuul.routes.userweb.path=/user/**
+zuul.routes.userweb.url=http://12.12.1.1:8080/user
+
+#####《服务实例化模式》
+##服务实例自动化配置
+zuul.routes.userweb.path=/user/**
+zuul.routes.userweb.serviceId=user
+##或者
+zuul.routes.userweb=/user/**
+
+##其中 * 、**、? 三种通配符也需要了解 
+
+##路由配置忽略
+zuul.ignored-patterns=/**/hello/**
+
+##内置hystrix 和 ribbon超时时间以及重试问题
+hystrix.command.default.execution.isolation.thread.timeoutInMillseconds=5000
+ribbon.ConnectTimeOut=2000
+ribbon.ReadTimeOut=2000
+
+##关闭重试
+zuul.retryable=false
+##关闭某个实例的重试
+zuul.routes.user.retryable=false
+```
+
+###### 饥饿加载问题
+
+如果路由规则不是指定，而是采用默认路由的话，那光enabled是无法起作用的，因为系统需要知道你指定的加载路由的服务有哪些，所以需要忽略所有的默认路由，让所有服务的路由规则都在系统的维护中才能完成提前加载。
+
+```properties
+zuul.ribbon.eager-load.enabled=true
+zuul.ignored-services=*
+```
+
+###### cookie和重定向
+
+默认zuul路由配置下是会忽略Cookie 和 Authorization相关信息，不会继续往下传递的，所以会导致有些会话信息丢失，如果需保持就需要在配置中指定不忽略向下传递。
+
+重定向问题同理也是忽略了header中的host导致
+
+```properties
+##全局设置
+zuul.sensitive-headers=
+##指定路由设置
+zuul.routes.user.sensitive-headers=
+zuul.routes.user.custom-sensitive-headers=true
+
+##加入host的传递
+zuul.add-host-header=true
+```
+
+##### 3. 过滤器&认证
+
+###### 过滤器4个方法
+
+- `filterType`：过滤器的类型，它决定过滤器在请求的哪个生命周期中执行。
+  - `pre` 代表会在请求被路由之前执行。
+  - `route` 代表在请求被路由时执行
+  - `post` 代表在routing和error过滤器之后执行
+  - `error` 代表处理请求时发生错误时执行
+
+- `filterOrder`：过滤器的执行顺序。数字越低越先执行。
+
+- `shouldFilter`：判断该过滤器是否需要被执行。true标识执行，false标识不执行。
+
+-  `run`：过滤器的具体逻辑。
+
+  ![zull](https://github.com/TrimGHU/reborn/blob/master/images/zull.png)
+
+###### 常见实例1：鉴权认证
+
+```JAVA
+public class AccessFilter extends ZuulFilter  {
+
+    private static Logger log = LoggerFactory.getLogger(AccessFilter.class);
+
+    @Override
+    public String filterType() {
+        return "pre";
+    }
+
+    @Override
+    public int filterOrder() {
+        return 0;
+    }
+
+    @Override
+    public boolean shouldFilter() {
+        return true;
+    }
+
+    @Override
+    public Object run() {
+        RequestContext ctx = RequestContext.getCurrentContext();
+        HttpServletRequest request = ctx.getRequest();
+
+        Object accessToken = request.getParameter("accessToken");
+        if(accessToken == null) {
+            log.warn("access token is empty");
+            ctx.setSendZuulResponse(false);
+            ctx.setResponseStatusCode(401);
+            return null;
+        }
+        log.info("access token ok");
+        return null;
+    }
+}
+```
+
+###### 常见实例2：异常处理
+
+常见的zuul过滤器类，在spring cloud的D版中将SendErrFilter改为error类别过滤器解决很多问题
+
+![spring-cloud-zuul-core-filter](https://github.com/TrimGHU/reborn/blob/master/images/spring-cloud-zuul-core-filter.png)
+
+
+
+
+
 
 
 
