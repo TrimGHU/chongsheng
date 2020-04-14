@@ -501,16 +501,20 @@ public class AccessFilter extends ZuulFilter  {
 
 ###### 常见实例2：异常处理
 
-常见的zuul过滤器类，在spring cloud的D版中将SendErrFilter改为error类别过滤器解决很多问题
+```java
+//SendErrorFilter.class
+@Override
+public boolean shouldFilter() {
+	RequestContext ctx = RequestContext.getCurrentContext();
+	// only forward to errorPath if it hasn't been forwarded to already
+	return ctx.getThrowable() != null
+				&& !ctx.getBoolean(SEND_ERROR_FILTER_RAN, false);
+}
+```
+
+常见的zuul过滤器类SendErrorFilter只有在ctx.getThrowable() != null才会执行，并且在spring cloud的D版中将SendErrorFilter从post改为error类别过滤器解决很多问题，例如以前type=post发生的错误，需要自己自定义方法解决，现在SendErrFilter也能很好的handle了
 
 ![spring-cloud-zuul-core-filter](https://github.com/TrimGHU/reborn/blob/master/images/spring-cloud-zuul-core-filter.png)
-
-
-
-
-
-
-
 
 
 
