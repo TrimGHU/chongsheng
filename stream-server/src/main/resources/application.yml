@@ -1,0 +1,16 @@
+##配置项目名称
+spring:
+  application:
+    name: stream-server
+  cloud:
+    stream:
+      bindings:
+        input:
+          group: bill
+          destination: input-bill
+        output:
+          destination: output-bill
+
+##配置项目访问端口
+server:
+  port: 5001
