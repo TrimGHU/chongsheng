@@ -10,6 +10,11 @@ spring:
           destination: input-bill
         output:
           destination: output-bill
+  rabbitmq:
+    host: 120.78.129.142
+    port: 5672
+    username: hugui
+    password: hugui123
 
 ##配置项目访问端口
 server:
