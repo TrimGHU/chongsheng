@@ -11,9 +11,11 @@
     <modules>
         <module>eureka-server</module>
         <module>user</module>
-        <module>user-web</module>
+        <module>user-api</module>
+        <module>front-web</module>
         <module>zuul-server</module>
         <module>stream-server</module>
+        <module>message</module>
     </modules>
 
     <name>chongsheng</name>
@@ -25,6 +27,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

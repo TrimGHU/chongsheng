@@ -10,13 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
 @EnableEurekaClient
-@RestController
 public class UserApplication {
-
-    @RequestMapping("/name")
-    public String getName(){
-        return "My name is Hello World";
-    }
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(UserApplication.class).web(true).run(args);

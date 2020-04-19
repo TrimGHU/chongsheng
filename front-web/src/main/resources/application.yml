@@ -3,7 +3,18 @@ server:
 
 spring:
   application:
-    name: user-web
+    name: front-web
+  cloud:
+    stream:
+      bindings:
+        add_user_output:
+          destination: add_user_queue
+          group: add_user
+  rabbitmq:
+    host: 120.78.129.142
+    port: 5672
+    username: hugui
+    password: hugui123
 
 eureka:
   client:

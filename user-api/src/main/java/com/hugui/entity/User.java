@@ -1,15 +1,20 @@
-package com.hugui.Entity;
+package com.hugui.entity;
+
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
+/**
+ * @author:hugui
+ */
+
 @Setter
+@Getter
 @Builder
-public class Bill {
+public class User {
 
     String username;
-    Integer total;
+    String password;
 
 }

@@ -1,0 +1,21 @@
+server:
+  port: 6001
+
+spring:
+  application:
+    name: message
+  cloud:
+    stream:
+      bindings:
+        email_input:
+          destination: email_queue
+          group: email
+        addition_info_input:
+          destination: addition_info_queue
+          group: additioninfo
+  rabbitmq:
+    host: 120.78.129.142
+    port: 5672
+    username: hugui
+    password: hugui123
+
