@@ -16,8 +16,8 @@ import java.util.Random;
 public class UserServiceImpl implements IUserService{
 
     @Override
-    public long add(User user) {
-        log.info("Add user : " + user.getUsername() + " = " + user.getPassword());
+    public long add(String username, String password) {
+        log.info("Add user : " + username + " = " + password);
         return new Random(100).nextInt();
     }
 }

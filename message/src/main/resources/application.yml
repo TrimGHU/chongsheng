@@ -8,10 +8,10 @@ spring:
     stream:
       bindings:
         email_input:
-          destination: email_queue
+          destination: add_user_queue
           group: email
         addition_info_input:
-          destination: addition_info_queue
+          destination: add_user_queue
           group: additioninfo
   rabbitmq:
     host: 120.78.129.142

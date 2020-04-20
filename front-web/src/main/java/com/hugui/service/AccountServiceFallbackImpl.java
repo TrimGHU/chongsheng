@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-public class UserServiceFallbackImpl implements UserService {
+public class AccountServiceFallbackImpl implements IAccountService {
 
-    private Logger log = LoggerFactory.getLogger(UserServiceFallbackImpl.class);
+    private Logger log = LoggerFactory.getLogger(AccountServiceFallbackImpl.class);
 
     @Override
     public String getName() {

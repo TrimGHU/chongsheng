@@ -1,6 +1,5 @@
 package com.hugui.service;
 
-import com.hugui.entity.User;
 
 /**
  * @author hugui
@@ -13,6 +12,6 @@ public interface IUserService {
      * @param user
      * @return
      */
-    long add(User user);
+    long add(String username, String password);
 
 }

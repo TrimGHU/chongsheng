@@ -2,13 +2,14 @@ package com.hugui.service;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @author  hugui
  */
 
-@FeignClient(name = "user", fallback = UserServiceFallbackImpl.class)
-public interface UserService {
+@FeignClient(name = "user", fallback = AccountServiceFallbackImpl.class)
+public interface IAccountService {
 
     /**
      * 获取名称
@@ -24,5 +25,5 @@ public interface UserService {
      * @return
      */
     @GetMapping("/add")
-    long add(String username, String password);
+    long add(@RequestParam("username")String username, @RequestParam("password")String password);
 }

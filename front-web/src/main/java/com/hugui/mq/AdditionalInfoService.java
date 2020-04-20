@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @EnableBinding(ISinkSender.class)
-public class AdditionalInfoService {
+public class AdditionalInfoService implements IAdditionalInfoService{
 
     @Autowired
     @Output(ISinkSender.ADD_USER_OUTPUT)
