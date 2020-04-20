@@ -519,3 +519,182 @@ public boolean shouldFilter() {
 
 
 
+### Stream
+
+> Spring Cloud Stream is a framework for building message-driven microservice applications. 
+>
+>SpringCloud Stream是一个整合当前主流MQ一个集成框架，类似于SpringBoot和SpringMVC之间的关系。
+
+**PS： 下文全部都用RabbitMQ作为传输**
+
+RabbitMQ安装方式自行百度，只是要注意erlang和rabbit之间的版本关联[<<走你>>](https://www.rabbitmq.com/which-erlang.html)
+
+```properties
+##rabbit 默认端口说明
+4369 erlang发现口 
+5672 client端通信口 
+15672 管理界面ui端口 
+25672 server间内部通信口 
+```
+
+##### 1. 引入
+
+```XML
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-stream-rabbit</artifactId>
+</dependency>
+```
+
+##### 2. 配置
+
+在配置好配置文件之后，启动时会自动在相应的mq中产生相应的queue通道。
+
+很多种配置方式
+
+1. 多个rabbitmq配置
+2. 多queue通道的
+3. 多种类型mq的
+4. 多binder的
+
+```properties
+spring:
+  cloud:
+    stream:
+      bindings:
+      	add_user_output:
+      	  destination: add_user_queue
+      	  group: adduser
+        email_input:
+          destination: add_user_queue
+          group: email
+        addition_info_input:
+          destination: add_user_queue
+          group: additioninfo
+  ###还有很多种配置方
+  ###1. 支持多rabbitmq端
+  ###2. 多种类型mq
+  ###3. 多binder的配置
+  rabbitmq:
+    host: xx.xx.xx.xx
+    port: 5672
+    username: xxx
+    password: xxx
+```
+
+##### 3. 自定义输出和接受渠
+
+从官方文档中可以了解到引入binder，是由它和 消息中间件 MQ去交互，然而应用程序只需要和binder透明的交互就好，并且这交互的渠道叫Channel分为input和output，相当于发布和订阅。
+
+![SCSt-with-binder](https://github.com/TrimGHU/reborn/blob/master/images/SCSt-with-binder.png)
+
+官方默认有输出和接受渠，对应是Source.class, Sink.class
+
+```JAVA
+package org.springframework.cloud.stream.messaging;
+
+import org.springframework.cloud.stream.annotation.Input;
+import org.springframework.messaging.SubscribableChannel;
+
+/**
+ * Bindable interface with one input channel.
+ *
+ * @see org.springframework.cloud.stream.annotation.EnableBinding
+ * @author Dave Syer
+ * @author Marius Bogoevici
+ */
+public interface Sink {
+
+	String INPUT = "input";
+
+	@Input(Sink.INPUT)
+	SubscribableChannel input();
+}
+```
+
+```java
+package org.springframework.cloud.stream.messaging;
+
+import org.springframework.cloud.stream.annotation.Output;
+import org.springframework.messaging.MessageChannel;
+
+/**
+ * Bindable interface with one output channel.
+ *
+ * @see org.springframework.cloud.stream.annotation.EnableBinding
+ * @author Dave Syer
+ * @author Marius Bogoevici
+ */
+public interface Source {
+
+	String OUTPUT = "output";
+
+	@Output(Source.OUTPUT)
+	MessageChannel output();
+
+}
+```
+
+但如果出现同一渠道被多方接收，或者多个渠道被1方同时接收时就需要自定义了，且自定义也更好管理相应的通道。
+
+```JAVA
+public interface ISourceReceiver {
+    String EMAIL_INPUT = "email_input";
+    String ADDITION_INFO_INPUT = "addition_info_input";
+
+    /**
+     * 添加用户触发的发送email
+     * @return
+     */
+    @Input(EMAIL_INPUT)
+    SubscribableChannel emailInput();
+
+    /**
+     * 添加用户触发的添加附加信息
+     * @return
+     */
+    @Input(ADDITION_INFO_INPUT)
+    SubscribableChannel additionInfoInput();
+}
+```
+
+```JAVA
+public interface ISinkSender {
+
+    String ADD_USER_OUTPUT = "add_user_output";
+
+    /**
+     * 添加用户的mq输出
+     * @return
+     */
+    @Output(ADD_USER_OUTPUT)
+    MessageChannel addUserOutput();
+}
+```
+
+##### 4. 示例描述
+
+###### 场景描述
+
+​	创建用户之后通知小心添加附加信息 和 发送消息通知
+
+###### 对应工程
+
+​	front-web  定义触发事件MQ消息add_user_output
+
+​	user 用户服务
+
+​	message  定义接受并处理MQ消息email_input和addition_info_input
+
+###### 触发流程
+
+​	请求front-web新增用户，调用user接口创建用户成功后触发产生MQ消息，由message消息中心email_input和addition_info_input接受到，并作出相应的处理。
+
+
+
+##### 5. 死信DLQ队列
+
+##### 6. 梯度执行消息
+
+
+
