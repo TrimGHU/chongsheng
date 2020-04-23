@@ -693,6 +693,30 @@ public interface ISinkSender {
 
 
 ##### 5. 死信DLQ队列
+###### 相关配置和说明
+
+```properties
+spring:
+  cloud:
+    rabbit:
+        bindings:
+          email_input:
+            consumer:
+              ##消息消费失败会重新加入队列，直到消费成功
+              requeue-rejected: true
+              ##DLQ队列
+              auto-bind-dlq: true
+              ##DLQ死信队列里的消息,重新执行时错误原因会放入header
+              republish-to-dlq: true
+              ##DLQ队列中消息的存活时间
+              dlq-ttl: 10000
+    stream:
+      bindings:
+        email_input:
+          consumer:
+            ##自动重试次数,如果设置最大重试次数>1，则会将失败的消息传入死信队列
+            max-attempts: 3
+```
 
 ##### 6. 梯度执行消息
 

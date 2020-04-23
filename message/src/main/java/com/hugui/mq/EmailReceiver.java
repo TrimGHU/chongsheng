@@ -15,6 +15,8 @@ public class EmailReceiver {
 
     @StreamListener(ISourceReceiver.EMAIL_INPUT)
     public void receive(Message<String> message) {
+
+
         log.info("email input received, info : " + message);
     }
 

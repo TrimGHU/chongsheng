@@ -8,14 +8,32 @@ spring:
     stream:
       bindings:
         email_input:
+          consumer:
+            ##自动重试次数
+            max-attempts: 3
           destination: add_user_queue
           group: email
         addition_info_input:
           destination: add_user_queue
           group: additioninfo
+      rabbit:
+        bindings:
+          email_input:
+            consumer:
+              ##消息消费失败会重新加入队列，直到消费成功
+              requeue-rejected: true
+              ##DLQ队列
+              auto-bind-dlq: true
+              ##DLQ死信队列里的消息,重新执行时错误原因会放入header
+              republish-to-dlq: true
+              ##DLQ队列中消息的存活时间
+              dlq-ttl: 10000
+          addition_info_input:
+            consumer:
+              dlq-ttl: 10000
+              auto-bind-dlq: true
   rabbitmq:
     host: 120.78.129.142
     port: 5672
     username: hugui
     password: hugui123
-
